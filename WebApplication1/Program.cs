@@ -5,6 +5,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using WebApplication1.Data;
+using WebApplication1.Middlewares;
+using WebApplication1.Repositories.Interfaces;
+using WebApplication1.Repositories;
+using WebApplication1.Services.Interfaces;
+using WebApplication1.Services;
+using WebApplication1.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -71,9 +77,17 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.Configure<DataProtectionTokenProviderOptions>(o =>
     o.TokenLifespan = TimeSpan.FromHours(3));
 
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductService, ProductService>();
+
 // Add MVC and Web API controllers
 builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
+
+builder.Services.AddAutoMapper(typeof(AppProfile));
+
+
+
 
 var app = builder.Build();
 
@@ -84,9 +98,12 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
+   
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
