@@ -14,11 +14,13 @@ namespace WebApplication1.Controllers
     [ApiController]
     public class TokenController : ControllerBase
     {
+        private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IConfiguration _configuration;
 
-        public TokenController(UserManager<IdentityUser> userManager, IConfiguration configuration)
+        public TokenController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, IConfiguration configuration)
         {
+            _signInManager = signInManager;
             _userManager = userManager;
             _configuration = configuration;
         }
@@ -46,7 +48,15 @@ namespace WebApplication1.Controllers
                     expires: DateTime.Now.AddDays(15),
                     signingCredentials: creds);
 
-                return Ok(new
+                var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);
+
+
+                if (result.Succeeded)
+                { 
+                
+                }
+
+                    return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
                     expiration = token.ValidTo

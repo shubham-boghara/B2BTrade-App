@@ -9,7 +9,8 @@ namespace WebApplication1.Controllers.Api
 {
     [Route("api/v1/products")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
@@ -22,6 +23,7 @@ namespace WebApplication1.Controllers.Api
         [HttpGet]
         public async Task<IActionResult> GetProducts([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
+
             var products = await _productService.GetPagedProductsAsync(pageNumber, pageSize);
             return Ok(products);
         }

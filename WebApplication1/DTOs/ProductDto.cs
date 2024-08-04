@@ -11,7 +11,7 @@ namespace WebApplication1.DTOs
         public int? Quantity { get; set; }
         public int? CategoryID { get; set; }
         public int? SellerID { get; set; }
-        public string CategoryName { get; set; }
+        //public string CategoryName { get; set; }
     }
 
     public class CreateProductDto
