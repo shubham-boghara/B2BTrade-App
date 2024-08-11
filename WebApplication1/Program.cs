@@ -11,17 +11,29 @@ using WebApplication1.Repositories;
 using WebApplication1.Services.Interfaces;
 using WebApplication1.Services;
 using WebApplication1.Utilities;
+using WebApplication1.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+var tenantConnectionString = builder.Configuration.GetConnectionString("TenantConnection") ?? throw new InvalidOperationException("Connection string 'TanentConnection' not found.");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
+
+builder.Services.AddDbContext<TenantDbContext>(options =>
+    options.UseSqlServer(tenantConnectionString));
+
+/*builder.Services.AddDbContext<UserDbContext>(options =>
+    options.UseSqlServer(connectionString));*/
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Set up Identity
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddAuthentication()
@@ -38,7 +50,12 @@ builder.Services.AddAuthentication()
                 ValidAudience = builder.Configuration["Jwt:Issuer"],
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
             };
-        });
+        })
+         .AddGoogle(options =>
+         {
+             options.ClientId = "889528251554-5uri23il6v2imik6qidp9iqi0p32ohuh.apps.googleusercontent.com";
+             options.ClientSecret = "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";
+         });
 
 
 // Configure Identity options
@@ -84,10 +101,11 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
 
+builder.Services.AddHttpContextAccessor(); // Needed for tenant access
+//builder.Services.AddScoped<PermissionFilter>(); // Register the PermissionFilter
+builder.Services.AddScoped<TenantFilterAttribute>(); // Register the filter itself
+
 builder.Services.AddAutoMapper(typeof(AppProfile));
-
-
-
 
 var app = builder.Build();
 

@@ -24,9 +24,9 @@ namespace WebApplication1.DTOs
         public decimal? Price { get; set; }
         [Required]
         public int? Quantity { get; set; }
-        [Required]
+        //[Required]
         public int? CategoryID { get; set; }
-        [Required]
+        //[Required]
         public int? SellerID { get; set; }
     }
 

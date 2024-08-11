@@ -117,6 +117,7 @@ namespace WebApplication1.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    
                     /*var user = await _userManager.FindByEmailAsync(Input.Email);
 
                     var claims = new List<Claim>
