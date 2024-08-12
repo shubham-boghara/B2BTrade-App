@@ -13,5 +13,7 @@ namespace WebApplication1.Models
         public int? RoleID { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+
+        public string? TenantUserName { get; set; }
     }
 }
