@@ -104,6 +104,9 @@ namespace WebApplication1.Controllers
 
             if (tenantUser != null)
             {
+
+                var getTenant = await _tenantContext.Tenants.FindAsync(tenantUser.TenantID);
+
                 var user = await _userManager.FindByIdAsync(tenantUser.AspUserID);
 
                 if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
@@ -118,8 +121,9 @@ namespace WebApplication1.Controllers
                         new Claim(ClaimTypes.Name, user.UserName),
                         new Claim(ClaimTypes.Email, user.Email),
                         new Claim("TenantUserName", model.TenantUserName),
-                        new Claim("TenantID", tenantUser.TenantID.ToString()),
-                        new Claim("PkID", tenantUser.PkID.ToString())
+                        new Claim("TenantID", getTenant.TenantSeqID.ToString()),
+                        new Claim("PkID", tenantUser.PkID.ToString()),
+                        new Claim("CompanyName", getTenant.CompanyName)
                     };
 
                     claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
@@ -146,8 +150,9 @@ namespace WebApplication1.Controllers
                     {
                         new Claim(JwtRegisteredClaimNames.Jti, guid),
                         new Claim("TenantUserName", model.TenantUserName),
-                        new Claim("TenantID", tenantUser.TenantID.ToString()),
-                        new Claim("PkID", tenantUser.PkID.ToString())
+                        new Claim("TenantID", getTenant.TenantSeqID.ToString()),
+                        new Claim("PkID", tenantUser.PkID.ToString()),
+                        new Claim("CompanyName", getTenant.CompanyName)
                     };
 
                     // Sign in the user with claims

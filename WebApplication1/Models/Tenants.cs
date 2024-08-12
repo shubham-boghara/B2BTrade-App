@@ -13,5 +13,9 @@ namespace WebApplication1.Models
 
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+
+        public string? CompanyName { get; set; }
+
+        public int? TenantSeqID { get; set; }
     }
 }

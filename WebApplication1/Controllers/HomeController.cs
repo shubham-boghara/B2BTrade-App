@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using WebApplication1.Models;
@@ -17,6 +18,12 @@ namespace WebApplication1.Controllers
         {
             var user = User.Identity.Name;
 
+            return View();
+        }
+
+        [Authorize]
+        public IActionResult Profile()
+        {
             return View();
         }
 
