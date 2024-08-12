@@ -27,19 +27,19 @@ namespace WebApplication1.Repositories
         {
             
             // Retrieve AspUserIdID and AccessType from HttpContext.Items dynamically
-            var aspUserIdID = _httpContextAccessor.HttpContext?.Items["AspUserID"]?.ToString() ?? "";
-            var accessType = _httpContextAccessor.HttpContext?.Items["AccessType"]?.ToString() ?? "";
+            //var aspUserIdID = _httpContextAccessor.HttpContext?.Items["AspUserID"]?.ToString() ?? "";
+            //var accessType = _httpContextAccessor.HttpContext?.Items["AccessType"]?.ToString() ?? "";
 
-            if (string.IsNullOrEmpty(accessType))
+            /*if (string.IsNullOrEmpty(accessType))
             {
                 throw new InvalidOperationException("Access type is null or empty");
-            }
+            }*/
 
             // Initial products query with paging
             IQueryable<Products> products = _context.Products;
 
 
-            switch (accessType)
+            /*switch (accessType)
             {
                 case "all-data":
                     // No additional filtering needed
@@ -58,7 +58,7 @@ namespace WebApplication1.Repositories
 
                 default:
                     throw new InvalidOperationException("Invalid access type");
-            }
+            }*/
 
             var totalRecords = await products.CountAsync();
 
@@ -76,7 +76,7 @@ namespace WebApplication1.Repositories
         public async Task<Products> AddAsync(Products product)
         {
             product.CreatedAt = DateTime.Now;
-            //product.CreatedBy = _httpContextAccessor.HttpContext.Items["AspUserID"].ToString();
+            product.CreatedBy = _httpContextAccessor.HttpContext?.Items["AspUserID"]?.ToString() ?? "";
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
             return product;
@@ -85,7 +85,7 @@ namespace WebApplication1.Repositories
         public async Task<Products> UpdateAsync(Products product)
         {
             product.UpdatedAt = DateTime.Now;
-            //product.UpdatedBy = _httpContextAccessor.HttpContext.Items["AspUserID"].ToString();
+            product.UpdatedBy = _httpContextAccessor.HttpContext?.Items["AspUserID"]?.ToString() ?? "";
             _context.Products.Update(product);
             await _context.SaveChangesAsync();
             return product;
