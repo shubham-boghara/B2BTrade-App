@@ -7,9 +7,9 @@ namespace WebApplication1.Models
         [Key]
         public int TenantID { get; set; }
 
-        public string TenantName { get; set; }
+        public string? TenantName { get; set; }
 
-        public string Subdomain { get; set; }
+        public string? Subdomain { get; set; }
 
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }

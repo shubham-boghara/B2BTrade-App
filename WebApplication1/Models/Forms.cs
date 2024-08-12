@@ -7,8 +7,8 @@ namespace WebApplication1.Models
         [Key]
         public int FormID { get; set; }
 
-        public string FormName { get; set; }
+        public string? FormName { get; set; }
 
-        public string FormUrl { get; set; }
+        public string? FormUrl { get; set; }
     }
 }

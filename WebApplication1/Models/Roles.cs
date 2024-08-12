@@ -9,6 +9,6 @@ namespace WebApplication1.Models
 
         public int? TenantID { get; set; }
 
-        public string RoleName { get; set; }
+        public string? RoleName { get; set; }
     }
 }

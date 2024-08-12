@@ -7,6 +7,6 @@ namespace WebApplication1.Models
         [Key]
         public int AccessPermissionID { get; set; }
 
-        public string AccessType { get; set; }
+        public string? AccessType { get; set; }
     }
 }
