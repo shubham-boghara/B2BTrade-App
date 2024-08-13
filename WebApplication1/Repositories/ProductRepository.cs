@@ -6,15 +6,16 @@ using WebApplication1.Repositories.Interfaces;
 
 namespace WebApplication1.Repositories
 {
-    public class ProductRepository: IProductRepository
+    public class ProductRepository: BaseRepository, IProductRepository
     {
         private readonly TenantDbContext _context;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        
 
-        public ProductRepository(TenantDbContext context, IHttpContextAccessor httpContextAccessor)
+        public ProductRepository(TenantDbContext context, IHttpContextAccessor httpContextAccessor):
+            base(httpContextAccessor)
         {
             _context = context;
-            _httpContextAccessor = httpContextAccessor;
+            
            
         }
 
@@ -76,7 +77,7 @@ namespace WebApplication1.Repositories
         public async Task<Products> AddAsync(Products product)
         {
             product.CreatedAt = DateTime.Now;
-            product.CreatedBy = _httpContextAccessor.HttpContext?.Items["AspUserID"]?.ToString() ?? "";
+            product.CreatedBy = GetUserId();
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
             return product;
@@ -85,7 +86,7 @@ namespace WebApplication1.Repositories
         public async Task<Products> UpdateAsync(Products product)
         {
             product.UpdatedAt = DateTime.Now;
-            product.UpdatedBy = _httpContextAccessor.HttpContext?.Items["AspUserID"]?.ToString() ?? "";
+            product.UpdatedBy = GetUserId();
             _context.Products.Update(product);
             await _context.SaveChangesAsync();
             return product;

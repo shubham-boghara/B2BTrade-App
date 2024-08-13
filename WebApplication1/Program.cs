@@ -12,6 +12,7 @@ using WebApplication1.Services.Interfaces;
 using WebApplication1.Services;
 using WebApplication1.Utilities;
 using WebApplication1.Filters;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -102,7 +103,16 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Add MVC and Web API controllers
 builder.Services.AddControllersWithViews();
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    //options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    // To turn off camel casing
+    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+
+    // You can also add other options here
+    // options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    // options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
 builder.Services.AddHttpContextAccessor(); // Needed for tenant access
 //builder.Services.AddScoped<PermissionFilter>(); // Register the PermissionFilter

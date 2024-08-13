@@ -40,33 +40,34 @@
     <script>
         $(document).ready(function () {
             $('#loginForm').on('submit', function (event) {
+
                 event.preventDefault(); // Prevent the default form submission
+                makeLogin();
+            });
+
+            function makeLogin() {
 
                 var tenantUserName = $('#TenantUserName').val();
                 var password = $('#Password').val();
 
-                $.ajax({
-                    url: '/api/token/tenantlogin', // URL to your TenantLogin action
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        TenantUserName: tenantUserName,
-                        Password: password
-                    }),
-                    success: function (response) {
-                        // Handle success
-                        debugger;
-                        console.log('Login successful:', response);
-                        alert('Login successful! Token: ' + response.token);
-                        window.location.href = '/Home/Index';
-                    },
-                    error: function (xhr, status, error) {
-                        // Handle error
-                        console.error('Login failed:', error);
-                        alert('Login failed: ' + xhr.responseText);
-                    }
+                let obj = {
+                    TenantUserName: tenantUserName,
+                    Password: password
+                }
+
+                ajaxCrud('POST', '/api/token/tenantlogin', obj, function (response) {
+                    //console.log('Products retrieved successfully:', response);
+                    debugger;
+                    console.log('Login successful:', response);
+                    alert('Login successful! Token: ' + response.token);
+                    window.location.href = '/Home/Index';
+                    // Additional success handling
+                }, function (xhr, status, error) {
+                    console.error('Error retrieving products:', error);
+                    // Additional error handling
+                    alert('Login failed: ' + xhr.responseText);
                 });
-            });
+            }
         });
     </script>
 }

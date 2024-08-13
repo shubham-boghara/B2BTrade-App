@@ -4,5 +4,96 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Profile</h1>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                Profile
+            </div>
+            <div class="card-body">
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input class="form-control" id="Username" type="text" />
+                    </div>
+                    <div class="form-group">
+                        <label>PhoneNumber</label>
+                        <input class="form-control" id="PhoneNumber" type="text" />
+                    </div>
+                    <div class="form-group">
+                        <label>FirstName</label>
+                        <input class="form-control" id="FirstName" type="text" />
+                    </div>
+                    <div class="form-group">
+                        <label>lastName</label>
+                        <input class="form-control" id="LastName" type="text" />
+                    </div>
+                    <div class="form-group">
+                        <label>MiddleName</label>
+                        <input class="form-control" id="MiddleName" type="text" />
+                    </div>
+                     <button type="submit" class="btn btn-sm btn-primary mt-1">Submit</button>
+                </form>
+            </div>
+        </div>
+     </div>
+</div>
 
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            geMyProfile();
+
+            $("#profileForm").submit(function (e) {
+                e.preventDefault();
+
+                createMyProfile();
+
+            });
+
+        });
+
+        function geMyProfile() {
+            ajaxCrud('GET', '/api/v1/Users/Me/Profile', null, function (response) {
+                //console.log('Products retrieved successfully:', response);
+                $("#Username").val(response["Username"]);
+                $("#PhoneNumber").val(response["PhoneNumber"]);
+                $("#FirstName").val(response["FirstName"]);
+                $("#MiddleName").val(response["MiddleName"]);
+                $("#PhoneNumber").val(response["PhoneNumber"]);
+                $("#LastName").val(response["LastName"]);
+                // Additional success handling
+            }, function (xhr, status, error) {
+                console.error('Error retrieving products:', error);
+                // Additional error handling
+            });
+        }
+
+        function createMyProfile(){
+
+            var obj = {
+                Username: $("#Username").val(),
+                PhoneNumber: $("#PhoneNumber").val(),
+                FirstName: $("#FirstName").val(),
+                MiddleName: $("#MiddleName").val(),
+                PhoneNumber: $("#PhoneNumber").val(),
+                LastName: $("#LastName").val()
+            }
+
+            ajaxCrud('POST', '/api/v1/Users/Me/Profile', obj, function (response) {
+                //console.log('Products retrieved successfully:', response);
+                $("#Username").val(response["Username"]);
+                $("#PhoneNumber").val(response["PhoneNumber"]);
+                $("#FirstName").val(response["FirstName"]);
+                $("#MiddleName").val(response["MiddleName"]);
+                $("#PhoneNumber").val(response["PhoneNumber"]);
+                $("#LastName").val(response["LastName"]);
+                // Additional success handling
+            }, function (xhr, status, error) {
+                console.error('Error retrieving products:', error);
+                // Additional error handling
+            });
+        }
+    </script>
+}

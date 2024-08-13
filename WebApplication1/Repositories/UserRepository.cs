@@ -6,15 +6,16 @@ using WebApplication1.Repositories.Interfaces;
 
 namespace WebApplication1.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository : BaseRepository, IUserRepository
     {
         private readonly ApplicationDbContext _appContext;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        
 
         public UserRepository(ApplicationDbContext appContext, IHttpContextAccessor httpContextAccessor)
+            :base(httpContextAccessor)
         {
             _appContext = appContext;
-            _httpContextAccessor = httpContextAccessor;
+          
         }
 
         public async Task<Users> CreateUserProfileAsync(Users users)
@@ -43,8 +44,6 @@ namespace WebApplication1.Repositories
             return user;
         }
 
-        public string GetUserId() { 
-           return _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        }
+       
     }
 }

@@ -55,17 +55,17 @@
                     },
                     dataSrc: function (response) {
                         // Format the response to match DataTables' expectations
-                        return response.data;
+                        return response["Data"];
                     }
                 },
                 columns: [
-                    { data: 'productID' },
-                    { data: 'productName' },
-                    { data: 'description' },
-                    { data: 'price' },
-                    { data: 'quantity' },
-                    { data: 'categoryID' },
-                    { data: 'sellerID' }
+                    { data: 'ProductID' },
+                    { data: 'ProductName' },
+                    { data: 'Description' },
+                    { data: 'Price' },
+                    { data: 'Quantity' },
+                    { data: 'CategoryID' },
+                    { data: 'SellerID' }
                 ],
                 pageLength: 10 // Number of records per page
             });

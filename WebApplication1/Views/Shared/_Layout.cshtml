@@ -75,6 +75,13 @@
             &copy; 2024 - WebApplication1 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+    <!-- Loader HTML (hidden by default) -->
+    <div id="loader" class="d-flex justify-content-center align-items-center" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
@@ -86,3 +93,44 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+
+ <script>
+
+     function loaderShow(){
+        $('#loader').removeClass('d-none');
+     }
+
+     function loaderHide(){
+        $('#loader').addClass('d-none');
+     }
+
+     loaderHide();
+
+        // Standard jQuery AJAX function for CRUD operations
+        function ajaxCrud(type, url, data, successCallback, errorCallback) {
+
+            loaderShow();
+
+            $.ajax({
+                type: type, // GET, POST, PUT, DELETE
+                url: url,
+                data: data ? JSON.stringify(data) : null,
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    loaderHide();
+                    if (typeof successCallback === 'function') {
+                        successCallback(response);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    loaderHide();
+                    if (typeof errorCallback === 'function') {
+                        errorCallback(xhr, status, error);
+                    }
+                }
+            });
+        }
+
+ </script>
