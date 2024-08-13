@@ -23,15 +23,17 @@ namespace WebApplication1.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IConfiguration _configuration;
         private readonly ApplicationDbContext _tenantContext;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public TokenController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager, IConfiguration configuration,
-            ApplicationDbContext tenantContext
+            ApplicationDbContext tenantContext, RoleManager<IdentityRole> roleManager
             )
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _configuration = configuration;
             _tenantContext = tenantContext;
+            _roleManager = roleManager;
         }
 
         [HttpPost]
@@ -107,12 +109,13 @@ namespace WebApplication1.Controllers
 
                 var getTenant = await _tenantContext.Tenants.FindAsync(tenantUser.TenantID);
 
-                var user = await _userManager.FindByIdAsync(tenantUser.AspUserID);
+                var user = await _userManager.FindByIdAsync(tenantUser.AspUserID ?? "");
 
                 if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
                 {
-                    // Get the user roles
-                    var roles = await _userManager.GetRolesAsync(user);
+                    // Get the user role
+                    var role = await _roleManager.FindByIdAsync(tenantUser.AspRoleID);
+
                     var guid = Guid.NewGuid().ToString();
                     var claims = new List<Claim>
                     {
@@ -123,11 +126,11 @@ namespace WebApplication1.Controllers
                         new Claim("TenantUserName", model.TenantUserName),
                         new Claim("TenantID", getTenant.TenantSeqID.ToString()),
                         new Claim("PkID", tenantUser.PkID.ToString()),
-                        new Claim("CompanyName", getTenant.CompanyName)
+                        new Claim("CompanyName", getTenant.CompanyName),
+                        new Claim(ClaimTypes.Role, role?.Name ?? "No Role")
                     };
-
-                    claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
-
+                    
+                    //claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
                     var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -152,7 +155,8 @@ namespace WebApplication1.Controllers
                         new Claim("TenantUserName", model.TenantUserName),
                         new Claim("TenantID", getTenant.TenantSeqID.ToString()),
                         new Claim("PkID", tenantUser.PkID.ToString()),
-                        new Claim("CompanyName", getTenant.CompanyName)
+                        new Claim("CompanyName", getTenant.CompanyName),
+                        new Claim(ClaimTypes.Role, role?.Name ?? "No Role")
                     };
 
                     // Sign in the user with claims

@@ -28,6 +28,21 @@ namespace WebApplication1.Controllers
             return View();
         }
 
+        public IActionResult Users()
+        {
+            return View();
+        }
+
+        public IActionResult Roles()
+        {
+            return View();
+        }
+
+        public IActionResult RolePermissions() { 
+        
+            return View();
+        }
+
         //// GET: Tenants
         //public async Task<IActionResult> Index()
         //{

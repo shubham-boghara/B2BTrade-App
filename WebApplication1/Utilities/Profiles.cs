@@ -12,6 +12,8 @@ namespace WebApplication1.Utilities
                 CreateMap<Products, ProductDto>();
                 CreateMap<CreateProductDto, Products>();
                 CreateMap<UpdateProductDto, Products>();
+                CreateMap<Users, GetUserProfileDto>();
+                CreateMap<CreateUserProfileDto, Users>();
             }
         }
     

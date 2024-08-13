@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication1", "WebAppli
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "IdentityDB", "Database1\IdentityDB.sqlproj", "{2F2D20CE-3403-45D2-A8B9-535CBC6C8B0F}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "TenantDB", "TenantDB\TenantDB.sqlproj", "{320A48B1-1335-44F6-855C-DFB4734ABA31}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,12 @@ Global
 		{2F2D20CE-3403-45D2-A8B9-535CBC6C8B0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F2D20CE-3403-45D2-A8B9-535CBC6C8B0F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2F2D20CE-3403-45D2-A8B9-535CBC6C8B0F}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{320A48B1-1335-44F6-855C-DFB4734ABA31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{320A48B1-1335-44F6-855C-DFB4734ABA31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{320A48B1-1335-44F6-855C-DFB4734ABA31}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{320A48B1-1335-44F6-855C-DFB4734ABA31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{320A48B1-1335-44F6-855C-DFB4734ABA31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{320A48B1-1335-44F6-855C-DFB4734ABA31}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
