@@ -9,6 +9,8 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "IdentityDB", "Database1\Ide
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "TenantDB", "TenantDB\TenantDB.sqlproj", "{320A48B1-1335-44F6-855C-DFB4734ABA31}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebEdmxModels", "WebEdmxModels\WebEdmxModels.csproj", "{D990ECCC-8237-4E40-AE2B-5D45B9E7E6F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{320A48B1-1335-44F6-855C-DFB4734ABA31}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{320A48B1-1335-44F6-855C-DFB4734ABA31}.Release|Any CPU.Build.0 = Release|Any CPU
 		{320A48B1-1335-44F6-855C-DFB4734ABA31}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{D990ECCC-8237-4E40-AE2B-5D45B9E7E6F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D990ECCC-8237-4E40-AE2B-5D45B9E7E6F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D990ECCC-8237-4E40-AE2B-5D45B9E7E6F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D990ECCC-8237-4E40-AE2B-5D45B9E7E6F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

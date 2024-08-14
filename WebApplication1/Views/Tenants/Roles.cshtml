@@ -4,5 +4,51 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Roles</h1>
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                Roles
+            </div>
+            <div class="card-body table-responsive">
+                <table id="rolesTable">
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
+@section Scripts {
+
+    <script>
+        $(document).ready(function () {
+            $('#rolesTable').DataTable({
+                responsive: true,
+                serverSide: true,
+                processing: true,
+                ajax: {
+                    url: '/api/v1/tenants/My/Roles',
+                    type: 'GET',
+                    data: function (d) {
+                        // Map DataTable parameters to API parameters
+                        return {
+                            pageNumber: Math.ceil(d.start / d.length) + 1,
+                            pageSize: d.length
+                        };
+                    },
+                    dataSrc: function (response) {
+                        // Format the response to match DataTables' expectations
+                        return response["Data"];
+                    }
+                },
+                columns: [
+                    { data: 'RoleID', title: 'RoleID' },
+                    { data: 'RoleName', title: 'RoleName' },
+                    
+                ],
+                pageLength: 10 // Number of records per page
+            });
+        });
+    </script>
+
+}

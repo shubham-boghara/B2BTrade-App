@@ -10,13 +10,18 @@ namespace WebApplication1.Repositories
 
         public BaseRepository(IHttpContextAccessor httpContextAccessor)
         {
-            
+
             _httpContextAccessor = httpContextAccessor;
         }
 
         public string GetUserId()
         {
-            return _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return _httpContextAccessor?.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        }
+
+        public int GetTenantId()
+        {
+            return Convert.ToInt32(_httpContextAccessor?.HttpContext?.User?.FindFirst("TenantID")?.Value);
         }
     }
 }

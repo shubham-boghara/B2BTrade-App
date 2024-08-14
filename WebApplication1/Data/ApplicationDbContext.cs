@@ -28,5 +28,9 @@ namespace WebApplication1.Data
 
         public DbSet<Vw_Permissions> Vw_Permissions { get; set; }
 
+        public DbSet<vw_api_tenants_me_users> vw_api_tenants_me_users { get; set; }
+
+        public DbSet<vw_api_tenants_my_roles> vw_api_tenants_my_roles { get; set; }
+
     }
 }
