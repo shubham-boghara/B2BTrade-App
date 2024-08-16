@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Data;
+using WebApplication1.DTOs;
 using WebApplication1.Filters;
 using WebApplication1.Repositories;
 using WebApplication1.Repositories.Interfaces;
@@ -23,23 +24,51 @@ namespace WebApplication1.Controllers.Api
         }
 
         [HttpGet]
-        [Route("My/Users")]
-        public async Task<IActionResult> MyUsers([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        [Route("my/users")]
+        public async Task<IActionResult> GetUsers([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var users = await _tenantsRepository.GetTenantsMyUsersAsync(pageNumber, pageSize);
+            var users = await _tenantsRepository.GetUsersAsync(pageNumber, pageSize);
 
             return Ok(users);
         }
 
         [HttpGet]
-        [Route("My/Roles")]
-        public async Task<IActionResult> Roles([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        [Route("my/roles")]
+        public async Task<IActionResult> GetRoles([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var roles = await _tenantsRepository.GetTenantsMyRolesAsync(pageNumber, pageSize);
+            var roles = await _tenantsRepository.GetRolesAsync(pageNumber, pageSize);
 
             return Ok(roles);
         }
 
+        [HttpGet]
+        [Route("my/roles/{id}")]
+        public async Task<IActionResult> GetRole(int id)
+        {
+
+            var role = await _tenantsRepository.GetRoleByIdAsync(id);
+
+            if (role == null) {
+                return NotFound();
+            }
+
+            return Ok(role);
+        }
+
+        [HttpPost]
+        [Route("my/roles")]
+        public async Task<IActionResult> CreateRole(CreateRoleDto createRoleDto)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var createdRole = await _tenantsRepository.CreateRoleAsync(createRoleDto);
+
+            return Ok(createdRole);
+        }
 
     }
 }

@@ -24,6 +24,8 @@ namespace WebApplication1.Filters
 
             if (tenantIdClaim != null && int.TryParse(tenantIdClaim, out var tenantId))
             {
+                var getTenant = await _context.Tenants.FindAsync(tenantId);
+
                 var userTenantUser = await _context.TenantUsers
                     .SingleOrDefaultAsync(c => c.TenantID == tenantId && c.AspUserID == userId);
 
@@ -35,6 +37,7 @@ namespace WebApplication1.Filters
 
                 // Store the tenant ID in HttpContext
                 context.HttpContext.Items["TenantId"] = tenantId.ToString();
+                context.HttpContext.Items["TenantName"] = getTenant?.TenantName;
                 context.HttpContext.Items["AspUserID"] = userId;
                 context.HttpContext.Items["AccessType"] = "all-data";
             }

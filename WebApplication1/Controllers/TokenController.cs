@@ -114,7 +114,7 @@ namespace WebApplication1.Controllers
                 if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
                 {
                     // Get the user role
-                    var role = await _roleManager.FindByIdAsync(tenantUser.AspRoleID);
+                    var role = await _roleManager.FindByIdAsync(tenantUser.AspRoleID ?? "");
 
                     var guid = Guid.NewGuid().ToString();
                     var claims = new List<Claim>
@@ -124,7 +124,7 @@ namespace WebApplication1.Controllers
                         new Claim(ClaimTypes.Name, user.UserName),
                         new Claim(ClaimTypes.Email, user.Email),
                         new Claim("TenantUserName", model.TenantUserName),
-                        new Claim("TenantID", getTenant.TenantSeqID.ToString()),
+                        new Claim("TenantID", getTenant.TenantID.ToString()),
                         new Claim("PkID", tenantUser.PkID.ToString()),
                         new Claim("CompanyName", getTenant.CompanyName),
                         new Claim(ClaimTypes.Role, role?.Name ?? "No Role")
@@ -153,7 +153,7 @@ namespace WebApplication1.Controllers
                     {
                         new Claim(JwtRegisteredClaimNames.Jti, guid),
                         new Claim("TenantUserName", model.TenantUserName),
-                        new Claim("TenantID", getTenant.TenantSeqID.ToString()),
+                        new Claim("TenantID", getTenant.TenantID.ToString()),
                         new Claim("PkID", tenantUser.PkID.ToString()),
                         new Claim("CompanyName", getTenant.CompanyName),
                         new Claim(ClaimTypes.Role, role?.Name ?? "No Role")

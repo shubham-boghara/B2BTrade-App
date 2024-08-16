@@ -20,10 +20,10 @@ namespace WebApplication1.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var tenantId = _httpContextAccessor.HttpContext?.Items["TenantId"]?.ToString();
+            var tenantId = _httpContextAccessor.HttpContext?.Items["TenantName"]?.ToString();
             if (tenantId != null)
             {
-                var connectionString = _configuration.GetConnectionString("TenantConnection").Replace("{TenantId}", tenantId);
+                var connectionString = _configuration.GetConnectionString("TenantConnection").Replace("{TenantName}", tenantId);
                 optionsBuilder.UseSqlServer(connectionString);
             }
             else
