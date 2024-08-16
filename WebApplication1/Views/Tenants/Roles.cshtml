@@ -8,6 +8,24 @@
     <div class="col-md-4">
         <div class="card">
             <div class="card-header">
+               Create Role
+            </div>
+            <div class="card-body">
+                <form id= "roleForm">
+                    <input type="hidden" id="RoleID" />
+                    <div class="form-group">
+                        <label>RoleName</label>
+                        <input class="form-control" id="RoleName" type="text" required />
+                    </div>
+                    <button type="submit" class="btn btn-sm btn-primary mt-1">Submit</button>
+                    <button type="button" class="btn btn-sm btn-secondary mt-1" onclick="clearRoleForm()">Clear</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
                 Roles
             </div>
             <div class="card-body table-responsive">
@@ -44,11 +62,98 @@
                 columns: [
                     { data: 'RoleID', title: 'RoleID' },
                     { data: 'RoleName', title: 'RoleName' },
-                    
+                    {
+                        data: null, // This column does not correspond to any data source
+                        title: 'Actions',
+                        orderable: false,
+                        searchable: false,
+                        render: function (data, type, row) {
+                            return `
+                                    <button class="btn btn-sm btn-primary me-2" onclick="getRole(${row.RoleID})">Edit</button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteRole(${row.RoleID})">Remove</button>`;
+                        }
+                    }
                 ],
                 pageLength: 10 // Number of records per page
             });
+
+            $("#roleForm").submit(function (e) {
+                e.preventDefault();
+
+                if ($("#RoleID").val() > 0){
+                    editRole();
+                }else{
+                    createRole();
+                }
+
+            });
         });
+
+        function createRole() {
+
+            var obj = {
+                RoleName: $("#RoleName").val(),
+               
+            }
+
+            ajaxCrud('POST', '/api/v1/tenants/my/roles', obj, function (response) {
+                
+                $('#rolesTable').DataTable().ajax.reload(); // Reload DataTable after saving
+                clearRoleForm();
+                // Additional success handling
+            }, function (xhr, status, error) {
+                console.error('Error retrieving products:', error);
+                // Additional error handling
+            });
+        }
+
+        function editRole() {
+            var obj = {
+                RoleID: $("#RoleID").val(),
+                RoleName: $("#RoleName").val(),
+
+            }
+
+            ajaxCrud('PUT', '/api/v1/tenants/my/roles' + `/${obj.RoleID}`, obj, function (response) {
+
+                $('#rolesTable').DataTable().ajax.reload(); // Reload DataTable after saving
+                clearRoleForm();
+                // Additional success handling
+            }, function (xhr, status, error) {
+                console.error('Error retrieving products:', error);
+                // Additional error handling
+            });
+        }
+
+        function getRole(RoleID) {
+            ajaxCrud('GET', '/api/v1/tenants/my/roles'+`/${RoleID}`, null, function (response) {
+
+                $("#RoleID").val(response["RoleID"]);
+                $("#RoleName").val(response["RoleName"]);
+                // Additional success handling
+            }, function (xhr, status, error) {
+                console.error('Error retrieving products:', error);
+                // Additional error handling
+            });
+        }
+
+        function clearRoleForm() {
+            $("#RoleID").val('');      // Clear the RoleID field
+            $("#RoleName").val('');    // Clear the RoleName field
+
+            // Additional fields can be cleared here if necessary
+        }
+
+        function deleteRole(RoleID) {
+            ajaxCrud('DELETE', '/api/v1/tenants/my/roles' + `/${RoleID}`, null, function (response) {
+
+                $('#rolesTable').DataTable().ajax.reload(); // Reload DataTable after saving
+                // Additional success handling
+            }, function (xhr, status, error) {
+                console.error('Error retrieving products:', error);
+                // Additional error handling
+            });
+        }
     </script>
 
 }

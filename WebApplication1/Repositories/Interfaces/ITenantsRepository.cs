@@ -1,4 +1,5 @@
 ﻿using WebApplication1.DTOs;
+using WebApplication1.Models;
 using WebApplication1.Models.ViewModels;
 
 namespace WebApplication1.Repositories.Interfaces
@@ -13,5 +14,11 @@ namespace WebApplication1.Repositories.Interfaces
         Task<vw_api_tenants_my_roles> GetRoleByIdAsync(int id);
 
         Task<vw_api_tenants_my_roles> CreateRoleAsync(CreateRoleDto createRoleDto);
+
+        Task<vw_api_tenants_my_roles> UpdateRoleAsync(int id, UpdateRoleDto updateRoleDto);
+
+        Task<Roles> RolesAsync(int id);
+
+        Task<bool> DeleteRoleAsync(int id);
     }
 }

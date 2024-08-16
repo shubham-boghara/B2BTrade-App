@@ -11,4 +11,13 @@ namespace WebApplication1.DTOs
         [Required]
         public string? RoleName { get; set; }
     }
+
+    public class UpdateRoleDto
+    {
+        [Required]
+        public int RoleID { get; set; }
+
+        [Required]
+        public string? RoleName { get; set; }
+    }
 }

@@ -26,11 +26,11 @@ namespace WebApplication1.Repositories
 
             var totalRecords = await _appContext.vw_api_tenants_me_users.Where(c => c.TenantID == currentTenantID).CountAsync();
 
-            var tenantList = await _appContext.vw_api_tenants_me_users.Where(c => c.TenantID == currentTenantID)
+            var users = await _appContext.vw_api_tenants_me_users.Where(c => c.TenantID == currentTenantID)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize).ToListAsync();
 
-            return new PagedResponseDto<vw_api_tenants_me_users>(tenantList, pageNumber, pageSize, totalRecords);
+            return new PagedResponseDto<vw_api_tenants_me_users>(users, pageNumber, pageSize, totalRecords);
         }
 
         public async Task<PagedResponseDto<vw_api_tenants_my_roles>> GetRolesAsync(int pageNumber, int pageSize)
@@ -39,20 +39,20 @@ namespace WebApplication1.Repositories
 
             var totalRecords = await _appContext.vw_api_tenants_my_roles.Where(c => c.TenantID == currentTenantID).CountAsync();
 
-            var roleList = await _appContext.vw_api_tenants_my_roles.Where(c => c.TenantID == currentTenantID)
+            var roles = await _appContext.vw_api_tenants_my_roles.Where(c => c.TenantID == currentTenantID)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize).ToListAsync();
 
-            return new PagedResponseDto<vw_api_tenants_my_roles>(roleList, pageNumber, pageSize, totalRecords);
+            return new PagedResponseDto<vw_api_tenants_my_roles>(roles, pageNumber, pageSize, totalRecords);
         }
 
         public async Task<vw_api_tenants_my_roles> GetRoleByIdAsync(int id)
         {
             var currentTenantID = GetTenantId();
 
-            var roleByPk = await _appContext.vw_api_tenants_my_roles.SingleOrDefaultAsync(c => c.RoleID == id);
+            var roleById = await _appContext.vw_api_tenants_my_roles.SingleOrDefaultAsync(c => c.RoleID == id);
 
-            return roleByPk;
+            return roleById;
         }
 
         public async Task<vw_api_tenants_my_roles> CreateRoleAsync(CreateRoleDto createRoleDto)
@@ -64,10 +64,49 @@ namespace WebApplication1.Repositories
             _appContext.Roles.Add(role);
             await _appContext.SaveChangesAsync();
 
-            var roleByPk = await GetRoleByIdAsync(role.RoleID);
+            var roleById = await GetRoleByIdAsync(role.RoleID);
 
-            return roleByPk;
+            return roleById;
 
+        }
+
+        public async Task<vw_api_tenants_my_roles> UpdateRoleAsync(int id, UpdateRoleDto updateRoleDto)
+        {
+            var currentTenantID = GetTenantId();
+
+            var role = await RolesAsync(id);
+
+            if(role == null)
+            {
+                return null;
+            }
+
+            _mapper.Map(updateRoleDto, role);
+            await _appContext.SaveChangesAsync();
+
+            var roleById = await GetRoleByIdAsync(role.RoleID);
+
+            return roleById;
+        }
+
+        public async Task<bool> DeleteRoleAsync(int id)
+        {
+            var role = await RolesAsync(id);
+
+            if(role == null)
+            {
+                return false;
+            }
+
+            _appContext.Roles.Remove(role);
+            await _appContext.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<Roles> RolesAsync(int id) {
+
+            return await _appContext.Roles.FindAsync(id);
         }
     }
 }

@@ -70,5 +70,33 @@ namespace WebApplication1.Controllers.Api
             return Ok(createdRole);
         }
 
+        [HttpPut]
+        [Route("my/roles/{id}")]
+        public async Task<IActionResult> UpdateRole(int id, UpdateRoleDto updateRoleDto)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var UpdatedRole = await _tenantsRepository.UpdateRoleAsync(id, updateRoleDto);
+
+            return Ok(UpdatedRole);
+        }
+
+        [HttpDelete]
+        [Route("my/roles/{id}")]
+        public async Task<IActionResult> DeleteRole(int id)
+        {
+
+            var result = await _tenantsRepository.DeleteRoleAsync(id);
+            if (!result)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
     }
 }

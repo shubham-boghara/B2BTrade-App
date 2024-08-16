@@ -50,7 +50,20 @@
                     { data: 'AspRoleName', title: 'AppRoleName' },
                     { data: 'RoleName', title: 'OrgRoleName' },
                     { data: 'CreatedAt', title: 'CreatedAt' },
-                    { data: 'UpdatedAt', title: 'UpdatedAt' }
+                    { data: 'UpdatedAt', title: 'UpdatedAt' },
+                    {
+                        data: null, // This column does not correspond to any data source
+                        title: 'Actions',
+                        orderable: false,
+                        searchable: false,
+                        render: function (data, type, row) {
+                            return `
+                            <button class="btn btn-sm btn-primary me-2" onclick="getRole(${row.RoleID})">Edit</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteRole(${row.RoleID})">Remove</button>`;
+                            // <button class="btn btn-sm btn-danger" onclick="assignRole(${row.RoleID})">Remove</button>`;
+                        }
+                    }
+
                 ],
                 pageLength: 10 // Number of records per page
             });

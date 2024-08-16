@@ -13,10 +13,14 @@ namespace WebApplication1.Utilities
                 CreateMap<Products, ProductDto>();
                 CreateMap<CreateProductDto, Products>();
                 CreateMap<UpdateProductDto, Products>();
+
                 CreateMap<Users, GetUserProfileDto>();
                 CreateMap<CreateUserProfileDto, Users>();
+
                 CreateMap<CreateRoleDto, Roles>();
-                CreateMap<Roles, vw_api_tenants_my_roles>();
+                //CreateMap<Roles, vw_api_tenants_my_roles>();
+                CreateMap<UpdateRoleDto, Roles>();  
+
             }
         }
     
