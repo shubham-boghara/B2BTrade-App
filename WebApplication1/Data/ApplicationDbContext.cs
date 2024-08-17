@@ -32,5 +32,7 @@ namespace WebApplication1.Data
 
         public DbSet<vw_api_tenants_my_roles> vw_api_tenants_my_roles { get; set; }
 
+        public DbSet<vw_api_tenants_chat_users> vw_api_tenants_chat_users { get; set; }
+
     }
 }

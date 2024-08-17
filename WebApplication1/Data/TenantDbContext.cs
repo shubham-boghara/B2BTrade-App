@@ -33,5 +33,7 @@ namespace WebApplication1.Data
         }
 
         public DbSet<Products> Products { get; set; }
+
+        public DbSet<ChatMessages> ChatMessages { get; set; }
     }
 }

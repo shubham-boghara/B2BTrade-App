@@ -20,5 +20,10 @@ namespace WebApplication1.Repositories.Interfaces
         Task<Roles> RolesAsync(int id);
 
         Task<bool> DeleteRoleAsync(int id);
+
+        Task<List<vw_api_tenants_chat_users>> ChatUsersAsync(ChatUserDto chatUserDto);
+        
+
+        
     }
 }

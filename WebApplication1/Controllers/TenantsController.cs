@@ -28,6 +28,11 @@ namespace WebApplication1.Controllers
             return View();
         }
 
+        public IActionResult Messages()
+        {
+            return View();
+        }
+
         public IActionResult Users()
         {
             return View();

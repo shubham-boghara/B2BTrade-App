@@ -104,6 +104,24 @@ namespace WebApplication1.Repositories
             return true;
         }
 
+        public async Task<List<vw_api_tenants_chat_users>> ChatUsersAsync(ChatUserDto chatUserDto)
+        {
+            var currentTenantID = GetTenantId();
+
+            IQueryable<vw_api_tenants_chat_users> users = _appContext.vw_api_tenants_chat_users.Where(c => c.TenantID == currentTenantID);
+
+            if (chatUserDto != null && chatUserDto.Ids.Any())
+            {
+                var filteredUsers = await users.Where(c => chatUserDto.Ids.Contains(c.AspUserID)).ToListAsync();
+                return filteredUsers;
+            }
+            else
+            {
+                var getUsers = await users.ToListAsync();
+                return getUsers;
+            }
+        }
+
         public async Task<Roles> RolesAsync(int id) {
 
             return await _appContext.Roles.FindAsync(id);

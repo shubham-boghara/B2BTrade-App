@@ -98,5 +98,14 @@ namespace WebApplication1.Controllers.Api
 
             return NoContent();
         }
+
+        [HttpPost]
+        [Route("chat/users")]
+        public async Task<IActionResult> ChatUsers([FromBody] ChatUserDto? chatUserDto)
+        {
+            var users = await _tenantsRepository.ChatUsersAsync(chatUserDto);
+
+            return Ok(users);
+        }
     }
 }

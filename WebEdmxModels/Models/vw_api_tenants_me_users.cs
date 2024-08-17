@@ -23,5 +23,6 @@ namespace WebEdmxModels.Models
         public Nullable<System.DateTime> CreatedAt { get; set; }
         public Nullable<System.DateTime> UpdatedAt { get; set; }
         public int PkID { get; set; }
+        public Nullable<int> TenantID { get; set; }
     }
 }

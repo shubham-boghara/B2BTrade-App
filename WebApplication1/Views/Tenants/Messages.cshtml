@@ -1,0 +1,204 @@
+﻿@{
+    ViewData["Title"] = "Messages";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .sidebar {
+        height: 100vh;
+        overflow-y: auto;
+        background-color: #ffffff;
+        border-right: 1px solid #e0e0e0;
+    }
+
+        .sidebar h4 {
+            background-color: #f1f1f1;
+            margin: 0;
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .sidebar ul {
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar li {
+            list-style: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+            .sidebar li:hover,
+            .sidebar li.active {
+                background-color: #f1f1f1;
+            }
+
+    .chat-container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        background-color: #ffffff;
+    }
+
+    .chat-header {
+        background-color: #f1f1f1;
+        padding: 15px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .chat-area {
+        flex: 1;
+        overflow-y: auto;
+        padding: 15px;
+        background-color: #e5ddd5;
+    }
+
+    .chat-message {
+        margin-bottom: 10px;
+        padding: 10px 15px;
+        border-radius: 20px;
+        max-width: 75%;
+        display: inline-block;
+    }
+
+        .chat-message.user {
+            background-color: #dcf8c6;
+            align-self: flex-end;
+        }
+
+        .chat-message.other {
+            background-color: #ffffff;
+            align-self: flex-start;
+        }
+
+    .chat-input {
+        display: flex;
+        padding: 10px;
+        border-top: 1px solid #e0e0e0;
+        background-color: #f1f1f1;
+    }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+        }
+
+        .chat-input button {
+            margin-left: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            background-color: #25d366;
+            color: #ffffff;
+        }
+
+            .chat-input button:hover {
+                background-color: #128c7e;
+            }
+</style>
+
+<div class="row">
+    <div class="col-md-3 p-0 sidebar">
+        <h4 class="text-center">Users</h4>
+        <ul class="list-group" id="userList">
+            <!-- Users will be dynamically populated here -->
+        </ul>
+    </div>
+    <div class="col-md-9 p-0 chat-container">
+        <div class="chat-header text-center">
+            <h4 id="chatHeader">Chat</h4>
+        </div>
+        <div id="messagesList" class="chat-area">
+            <!-- Messages will appear here -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="messageInput" class="form-control" placeholder="Type a message">
+            <button class="btn" id="sendButton">Send</button>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            const connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+            let selectedUser = null;
+
+            connection.start().then(function () {
+                console.log('SignalR Connected');
+                loadUserList(null); // Load the initial user list
+            }).catch(err => console.error(err.toString()));
+
+            $('#sendButton').on('click', function () {
+                if (selectedUser) {
+                    const message = $('#messageInput').val();
+                    connection.invoke("SendMessage", selectedUser, message).catch(err => console.error(err.toString()));
+                    $('#messageInput').val(''); // Clear the input after sending
+                } else {
+                    alert('Please select a user to chat with.');
+                }
+            });
+
+            $('#userList').on('click', 'li', function () {
+                selectedUser = $(this).data('username');
+                $('#userList li').removeClass('active');
+                $(this).addClass('active');
+                $('#chatHeader').text(`Chat with ${selectedUser}`);
+                loadMessagesForUser(selectedUser);
+            });
+
+            connection.on("ReceiveMessage", function (fromUser, message) {
+                if (fromUser == selectedUser) {
+                    const msg = $('<div>').addClass('chat-message other').text(`${fromUser}: ${message}`);
+                    $('#messagesList').append(msg);
+                    $('#messagesList').scrollTop($('#messagesList')[0].scrollHeight); // Auto-scroll to the bottom
+                }
+            });
+
+            connection.on("UserListUpdated", function (users) {
+                loadUserList(users);
+            });
+
+            function loadUserList(users) {
+                if (users) {
+                    var obj = { Ids: users }
+                    ajaxCrud('POST', '/api/v1/tenants/chat/users', obj, function (response) {
+                        updateUserList(response);
+                    }, function (xhr, status, error) {
+                        console.error('Error retrieving users:', error);
+                    });
+                } else {
+                    ajaxCrud('POST', '/api/v1/tenants/chat/users', null, function (response) {
+                        updateUserList(response);
+                    }, function (xhr, status, error) {
+                        console.error('Error retrieving users:', error);
+                    });
+                }
+            }
+
+            function updateUserList(users) {
+                const userList = $('#userList');
+                userList.empty();
+                users.forEach(user => {
+                    const fullName = user.FullName || user.UserName;
+                    userList.append(`<li class="list-group-item" data-username="${user.UserName}">${fullName}</li>`);
+                });
+            }
+
+            function loadMessagesForUser(user) {
+                // Placeholder for loading messages from a specific user
+                // You may need to implement this function if you have an API to fetch messages
+                $('#messagesList').empty(); // Clear existing messages
+            }
+        });
+    </script>
+}

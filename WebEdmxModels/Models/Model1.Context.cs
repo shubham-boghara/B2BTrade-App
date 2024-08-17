@@ -42,10 +42,13 @@ namespace WebEdmxModels.Models
         public virtual DbSet<Tenant> Tenants { get; set; }
         public virtual DbSet<TenantUser> TenantUsers { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<vw_api_tenants_chat_users> vw_api_tenants_chat_users { get; set; }
+        public virtual DbSet<vw_api_tenants_me_users> vw_api_tenants_me_users { get; set; }
+        public virtual DbSet<vw_api_tenants_my_roles> vw_api_tenants_my_roles { get; set; }
         public virtual DbSet<Vw_AspNetUserRoles> Vw_AspNetUserRoles { get; set; }
         public virtual DbSet<Vw_Permissions> Vw_Permissions { get; set; }
+        public virtual DbSet<Vw_Roles> Vw_Roles { get; set; }
         public virtual DbSet<Vw_TenantUsers> Vw_TenantUsers { get; set; }
-        public virtual DbSet<vw_api_tenants_me_users> vw_api_tenants_me_users { get; set; }
     
         public virtual int sp_alterdiagram(string diagramname, Nullable<int> owner_id, Nullable<int> version, byte[] definition)
         {

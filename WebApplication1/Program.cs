@@ -13,6 +13,7 @@ using WebApplication1.Services;
 using WebApplication1.Utilities;
 using WebApplication1.Filters;
 using System.Text.Json;
+using SignalRChat.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -104,6 +105,7 @@ builder.Services.AddScoped<ITenantsRepository, TenantsRepository>();
 
 // Add MVC and Web API controllers
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR();
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     //options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
@@ -152,5 +154,6 @@ app.MapControllerRoute(
 
 app.MapRazorPages();
 app.MapControllers();
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();
