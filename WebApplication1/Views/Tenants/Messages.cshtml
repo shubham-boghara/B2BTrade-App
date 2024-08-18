@@ -146,7 +146,7 @@
                     const message = $('#messageInput').val();
                     connection.invoke("SendMessage", selectedUser, message).catch(err => console.error(err.toString()));
 
-                    const msg = $('<div>').addClass('chat-message user').text(`${selectedUser}: ${message}`);
+                    const msg = $('<div>').addClass('chat-message user').text(`${message}`);
                     $('#messagesList').append(msg);
                     $('#messagesList').scrollTop($('#messagesList')[0].scrollHeight); // Auto-scroll to the bottom
 
@@ -166,7 +166,7 @@
 
             connection.on("ReceiveMessage", function (senderId, receiverId, message) {
                 if (senderId == selectedUser) {
-                    const msg = $('<div>').addClass('chat-message other').text(`${senderId}: ${message}`);
+                    const msg = $('<div>').addClass('chat-message other').text(`${message}`);
                     $('#messagesList').append(msg);
                     $('#messagesList').scrollTop($('#messagesList')[0].scrollHeight); // Auto-scroll to the bottom
                 }else{
@@ -210,7 +210,7 @@
                     $('#messagesList').empty(); // Clear existing messages
                     messages.forEach(msg => {
                         const msgClass = msg.SenderId == currentUserId ? 'user' : 'other';
-                        const message = $('<div>').addClass(`chat-message ${msgClass}`).text(`${msg.SenderId}: ${msg.Message}`);
+                        const message = $('<div>').addClass(`chat-message ${msgClass}`).text(`${msg.Message}`);
                         $('#messagesList').append(message);
                     });
                     $('#messagesList').scrollTop($('#messagesList')[0].scrollHeight); // Auto-scroll to the bottom
