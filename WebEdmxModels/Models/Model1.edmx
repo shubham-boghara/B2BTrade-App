@@ -607,7 +607,7 @@ warning 6002: The table/view 'IdentityDB.dbo.Vw_TenantUsers' does not have a pri
             <End Role="AspNetRole" EntitySet="AspNetRoles" />
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
           </AssociationSet>
-        </EntityContainer>
+          </EntityContainer>
         <ComplexType Name="sp_helpdiagramdefinition_Result">
           <Property Type="Int32" Name="version" Nullable="true" />
           <Property Type="Binary" Name="definition" Nullable="true" />
@@ -950,7 +950,7 @@ warning 6002: The table/view 'IdentityDB.dbo.Vw_TenantUsers' does not have a pri
           <End Type="IdentityDBModel.AspNetRole" Role="AspNetRole" Multiplicity="*" />
           <End Type="IdentityDBModel.AspNetUser" Role="AspNetUser" Multiplicity="*" />
         </Association>
-      </Schema>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -1253,7 +1253,7 @@ warning 6002: The table/view 'IdentityDB.dbo.Vw_TenantUsers' does not have a pri
               <ScalarProperty Name="Id" ColumnName="RoleId" />
             </EndProperty>
           </AssociationSetMapping>
-        </EntityContainerMapping>
+          </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
   </edmx:Runtime>
