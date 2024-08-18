@@ -102,6 +102,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITenantsRepository, TenantsRepository>();
+builder.Services.AddScoped<IChatRepository, ChatRepository>();
 
 // Add MVC and Web API controllers
 builder.Services.AddControllersWithViews();

@@ -126,6 +126,7 @@ namespace WebApplication1.Controllers
                         new Claim("TenantUserName", model.TenantUserName),
                         new Claim("TenantID", getTenant.TenantID.ToString()),
                         new Claim("PkID", tenantUser.PkID.ToString()),
+                        new Claim("TenantName", getTenant.TenantName),
                         new Claim("CompanyName", getTenant.CompanyName),
                         new Claim(ClaimTypes.Role, role?.Name ?? "No Role")
                     };
@@ -154,6 +155,7 @@ namespace WebApplication1.Controllers
                         new Claim(JwtRegisteredClaimNames.Jti, guid),
                         new Claim("TenantUserName", model.TenantUserName),
                         new Claim("TenantID", getTenant.TenantID.ToString()),
+                        new Claim("TenantName", getTenant.TenantName),
                         new Claim("PkID", tenantUser.PkID.ToString()),
                         new Claim("CompanyName", getTenant.CompanyName),
                         new Claim(ClaimTypes.Role, role?.Name ?? "No Role")

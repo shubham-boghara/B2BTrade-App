@@ -1,4 +1,5 @@
-﻿@{
+﻿@using System.Security.Claims
+@{
     ViewData["Title"] = "Messages";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -35,7 +36,7 @@
 
             .sidebar li:hover,
             .sidebar li.active {
-                background-color: #f1f1f1;
+                background-color: #e38991;
             }
 
     .chat-container {
@@ -56,6 +57,8 @@
         overflow-y: auto;
         padding: 15px;
         background-color: #e5ddd5;
+        display: flex;
+        flex-direction: column;
     }
 
     .chat-message {
@@ -63,7 +66,6 @@
         padding: 10px 15px;
         border-radius: 20px;
         max-width: 75%;
-        display: inline-block;
     }
 
         .chat-message.user {
@@ -104,6 +106,7 @@
             }
 </style>
 
+
 <div class="row">
     <div class="col-md-3 p-0 sidebar">
         <h4 class="text-center">Users</h4>
@@ -142,6 +145,11 @@
                 if (selectedUser) {
                     const message = $('#messageInput').val();
                     connection.invoke("SendMessage", selectedUser, message).catch(err => console.error(err.toString()));
+
+                    const msg = $('<div>').addClass('chat-message user').text(`${selectedUser}: ${message}`);
+                    $('#messagesList').append(msg);
+                    $('#messagesList').scrollTop($('#messagesList')[0].scrollHeight); // Auto-scroll to the bottom
+
                     $('#messageInput').val(''); // Clear the input after sending
                 } else {
                     alert('Please select a user to chat with.');
@@ -149,18 +157,20 @@
             });
 
             $('#userList').on('click', 'li', function () {
-                selectedUser = $(this).data('username');
+                selectedUser = $(this).data('userid');
                 $('#userList li').removeClass('active');
                 $(this).addClass('active');
                 $('#chatHeader').text(`Chat with ${selectedUser}`);
                 loadMessagesForUser(selectedUser);
             });
 
-            connection.on("ReceiveMessage", function (fromUser, message) {
-                if (fromUser == selectedUser) {
-                    const msg = $('<div>').addClass('chat-message other').text(`${fromUser}: ${message}`);
+            connection.on("ReceiveMessage", function (senderId, receiverId, message) {
+                if (senderId == selectedUser) {
+                    const msg = $('<div>').addClass('chat-message other').text(`${senderId}: ${message}`);
                     $('#messagesList').append(msg);
                     $('#messagesList').scrollTop($('#messagesList')[0].scrollHeight); // Auto-scroll to the bottom
+                }else{
+                    
                 }
             });
 
@@ -190,14 +200,23 @@
                 userList.empty();
                 users.forEach(user => {
                     const fullName = user.FullName || user.UserName;
-                    userList.append(`<li class="list-group-item" data-username="${user.UserName}">${fullName}</li>`);
+                    userList.append(`<li class="list-group-item" data-userid="${user.AspUserID}">${fullName}</li>`);
                 });
             }
 
             function loadMessagesForUser(user) {
-                // Placeholder for loading messages from a specific user
-                // You may need to implement this function if you have an API to fetch messages
-                $('#messagesList').empty(); // Clear existing messages
+                const currentUserId = '@User.FindFirstValue(ClaimTypes.NameIdentifier)';
+                ajaxCrud('GET', `/api/v1/chat/messages/${user}`, null, function (messages) {
+                    $('#messagesList').empty(); // Clear existing messages
+                    messages.forEach(msg => {
+                        const msgClass = msg.SenderId == currentUserId ? 'user' : 'other';
+                        const message = $('<div>').addClass(`chat-message ${msgClass}`).text(`${msg.SenderId}: ${msg.Message}`);
+                        $('#messagesList').append(message);
+                    });
+                    $('#messagesList').scrollTop($('#messagesList')[0].scrollHeight); // Auto-scroll to the bottom
+                }, function (xhr, status, error) {
+                    console.error('Error loading messages:', error);
+                });
             }
         });
     </script>

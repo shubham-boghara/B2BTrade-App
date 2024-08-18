@@ -1,27 +1,40 @@
 ﻿using System;
 using System.Security.Claims;
-using WebApplication1.Data;
+using Microsoft.AspNetCore.Http;
 
 namespace WebApplication1.Repositories
 {
-    public class BaseRepository
+    public abstract class BaseRepository
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public BaseRepository(IHttpContextAccessor httpContextAccessor)
+        protected BaseRepository(IHttpContextAccessor httpContextAccessor)
         {
-
-            _httpContextAccessor = httpContextAccessor;
+            _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
         }
 
         public string GetUserId()
         {
-            return _httpContextAccessor?.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+            var userId = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new InvalidOperationException("User ID is not available in the current context.");
+            }
+
+            return userId;
         }
 
         public int GetTenantId()
         {
-            return Convert.ToInt32(_httpContextAccessor?.HttpContext?.User?.FindFirst("TenantID")?.Value);
+            var tenantIdValue = _httpContextAccessor.HttpContext?.User?.FindFirst("TenantID")?.Value;
+
+            if (string.IsNullOrEmpty(tenantIdValue) || !int.TryParse(tenantIdValue, out int tenantId))
+            {
+                throw new InvalidOperationException("Tenant ID is not available or invalid in the current context.");
+            }
+
+            return tenantId;
         }
     }
 }

@@ -10,13 +10,13 @@ namespace WebApplication1.Repositories
 {
     public class TenantsRepository : BaseRepository, ITenantsRepository
     {
-        private readonly ApplicationDbContext _appContext;
+        private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
 
-        public TenantsRepository(ApplicationDbContext appContext, IHttpContextAccessor httpContextAccessor, IMapper mapper)
+        public TenantsRepository(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor, IMapper mapper)
             : base(httpContextAccessor)
         {
-            _appContext = appContext;
+            _context = context;
             _mapper = mapper;
         }
 
@@ -24,9 +24,9 @@ namespace WebApplication1.Repositories
         {
             var currentTenantID = GetTenantId();
 
-            var totalRecords = await _appContext.vw_api_tenants_me_users.Where(c => c.TenantID == currentTenantID).CountAsync();
+            var totalRecords = await _context.vw_api_tenants_me_users.Where(c => c.TenantID == currentTenantID).CountAsync();
 
-            var users = await _appContext.vw_api_tenants_me_users.Where(c => c.TenantID == currentTenantID)
+            var users = await _context.vw_api_tenants_me_users.Where(c => c.TenantID == currentTenantID)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize).ToListAsync();
 
@@ -37,9 +37,9 @@ namespace WebApplication1.Repositories
         {
             var currentTenantID = GetTenantId();
 
-            var totalRecords = await _appContext.vw_api_tenants_my_roles.Where(c => c.TenantID == currentTenantID).CountAsync();
+            var totalRecords = await _context.vw_api_tenants_my_roles.Where(c => c.TenantID == currentTenantID).CountAsync();
 
-            var roles = await _appContext.vw_api_tenants_my_roles.Where(c => c.TenantID == currentTenantID)
+            var roles = await _context.vw_api_tenants_my_roles.Where(c => c.TenantID == currentTenantID)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize).ToListAsync();
 
@@ -50,7 +50,7 @@ namespace WebApplication1.Repositories
         {
             var currentTenantID = GetTenantId();
 
-            var roleById = await _appContext.vw_api_tenants_my_roles.SingleOrDefaultAsync(c => c.RoleID == id);
+            var roleById = await _context.vw_api_tenants_my_roles.SingleOrDefaultAsync(c => c.RoleID == id);
 
             return roleById;
         }
@@ -61,8 +61,8 @@ namespace WebApplication1.Repositories
             var role = _mapper.Map<Roles>(createRoleDto);
             role.TenantID = currentTenantID;
 
-            _appContext.Roles.Add(role);
-            await _appContext.SaveChangesAsync();
+            _context.Roles.Add(role);
+            await _context.SaveChangesAsync();
 
             var roleById = await GetRoleByIdAsync(role.RoleID);
 
@@ -82,7 +82,7 @@ namespace WebApplication1.Repositories
             }
 
             _mapper.Map(updateRoleDto, role);
-            await _appContext.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             var roleById = await GetRoleByIdAsync(role.RoleID);
 
@@ -98,8 +98,8 @@ namespace WebApplication1.Repositories
                 return false;
             }
 
-            _appContext.Roles.Remove(role);
-            await _appContext.SaveChangesAsync();
+            _context.Roles.Remove(role);
+            await _context.SaveChangesAsync();
 
             return true;
         }
@@ -108,7 +108,7 @@ namespace WebApplication1.Repositories
         {
             var currentTenantID = GetTenantId();
 
-            IQueryable<vw_api_tenants_chat_users> users = _appContext.vw_api_tenants_chat_users.Where(c => c.TenantID == currentTenantID);
+            IQueryable<vw_api_tenants_chat_users> users = _context.vw_api_tenants_chat_users.Where(c => c.TenantID == currentTenantID);
 
             if (chatUserDto != null && chatUserDto.Ids.Any())
             {
@@ -124,7 +124,7 @@ namespace WebApplication1.Repositories
 
         public async Task<Roles> RolesAsync(int id) {
 
-            return await _appContext.Roles.FindAsync(id);
+            return await _context.Roles.FindAsync(id);
         }
     }
 }

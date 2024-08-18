@@ -1,6 +1,11 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
 using System.Security.Claims;
+using WebApplication1.Filters;
+using WebApplication1.Models;
+using WebApplication1.Repositories;
+using WebApplication1.Repositories.Interfaces;
 
 namespace SignalRChat.Hubs
 {
@@ -10,8 +15,15 @@ namespace SignalRChat.Hubs
         {
             await Clients.All.SendAsync("ReceiveMessage", user, message);
         }*/
+        private readonly IChatRepository _chatRepository;
+
 
         private static readonly ConcurrentDictionary<string, string> Users = new ConcurrentDictionary<string, string>();
+
+        public ChatHub(IChatRepository chatRepository)
+        {
+            _chatRepository = chatRepository;
+        }
 
         public override async Task OnConnectedAsync()
         {
@@ -23,7 +35,7 @@ namespace SignalRChat.Hubs
                 await Groups.AddToGroupAsync(Context.ConnectionId, tenantId);
                 Users[Context.ConnectionId] = userId;
 
-                await SendUserListUpdate(tenantId);
+                await SendUserListUpdate();
             }
 
             await base.OnConnectedAsync();
@@ -37,30 +49,47 @@ namespace SignalRChat.Hubs
             if (!string.IsNullOrEmpty(tenantId))
             {
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, tenantId);
-                await SendUserListUpdate(tenantId);
+                await SendUserListUpdate();
             }
 
             await base.OnDisconnectedAsync(exception);
         }
 
-        public async Task SendMessage(string user, string message)
+        public async Task SendMessage(string receiverId, string message)
         {
             var tenantId = Context.User?.FindFirst("TenantID")?.Value;
 
-            var fromUser = Context.User?.Identity.Name;
+            var senderId = Context.UserIdentifier;
+            var chatMessage = new ChatMessages
+            {
+                SenderId = senderId,
+                ReceiverId = receiverId,
+                Message = message,
+                CreatedAt = DateTime.Now
+            };
 
             if (!string.IsNullOrEmpty(tenantId))
             {
+                await _chatRepository.SaveMessageAsync(chatMessage);
 
-
-                await Clients.Group(tenantId).SendAsync("ReceiveMessage", fromUser, user, message);
+                await Clients.Group(tenantId).SendAsync("ReceiveMessage", senderId, receiverId, message);
             }
         }
 
-        private Task SendUserListUpdate(string tenantId)
+        private Task SendUserListUpdate()
         {
+            var tenantId = Context.User?.FindFirst("TenantID")?.Value;
+
             var usersInTenant = Users.Values.Distinct().ToList();
             return Clients.Group(tenantId).SendAsync("UserListUpdated", usersInTenant);
+        }
+
+        public async Task LoadMessages(string userId)
+        {
+            var tenantId = Context.User?.FindFirst("TenantID")?.Value;
+            var currentUserId = Context.UserIdentifier;
+            var messages = await _chatRepository.GetMessagesAsync(currentUserId, userId);
+            await Clients.Group(tenantId).SendAsync("LoadMessages", messages);
         }
     }
 }
