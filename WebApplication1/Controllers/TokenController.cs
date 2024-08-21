@@ -73,17 +73,21 @@ namespace WebApplication1.Controllers
 
                 var identityCliams = new List<Claim>
                 {
-                        new Claim(JwtRegisteredClaimNames.Jti, guid),
-                       
+                   new Claim(JwtRegisteredClaimNames.Jti, guid),
                 };
 
+                // Remove existing claims
+                var existingClaims = await _userManager.GetClaimsAsync(user);
+                var removeResult = await _userManager.RemoveClaimsAsync(user, existingClaims);
+
+                if (!removeResult.Succeeded)
+                {
+                    return BadRequest("Failed to remove existing claims.");
+                }
 
                 // Sign in the user with claims
                 await _signInManager.SignInWithClaimsAsync(user, isPersistent: true, identityCliams);
-                /*if (result.Succeeded)
-                { 
                 
-                }*/
 
                 return Ok(new
                 {
@@ -106,18 +110,15 @@ namespace WebApplication1.Controllers
 
             if (tenantUser != null)
             {
-
                 var getTenant = await _tenantContext.Tenants.FindAsync(tenantUser.TenantID);
-
                 var user = await _userManager.FindByIdAsync(tenantUser.AspUserID ?? "");
 
                 if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
                 {
-                    // Get the user role
                     var role = await _roleManager.FindByIdAsync(tenantUser.AspRoleID ?? "");
 
                     var guid = Guid.NewGuid().ToString();
-                    var claims = new List<Claim>
+                    var jwTclaims = new List<Claim>
                     {
                         new Claim(JwtRegisteredClaimNames.Jti, guid),
                         new Claim(ClaimTypes.NameIdentifier, user.Id),
@@ -130,39 +131,52 @@ namespace WebApplication1.Controllers
                         new Claim("CompanyName", getTenant.CompanyName),
                         new Claim(ClaimTypes.Role, role?.Name ?? "No Role")
                     };
-                    
-                    //claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+
                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
                     var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
                     var token = new JwtSecurityToken(
                         issuer: _configuration["Jwt:Issuer"],
                         audience: _configuration["Jwt:Issuer"],
-                        claims: claims,
+                        claims: jwTclaims,
                         expires: DateTime.Now.AddDays(15),
                         signingCredentials: creds
+                       
                     );
 
                     var tokenHandler = new JwtSecurityTokenHandler();
                     var tokenString = tokenHandler.WriteToken(token);
 
-                    // Create the ClaimsPrincipal
-                    //var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    //var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+                    // Remove existing claims
+                    var existingClaims = await _userManager.GetClaimsAsync(user);
+                    var removeResult = await _userManager.RemoveClaimsAsync(user, existingClaims);
 
-                    var identityCliams = new List<Claim>
+                    if (!removeResult.Succeeded)
+                    {
+                        return BadRequest("Failed to remove existing claims.");
+                    }
+
+                    var cookieClaims = new List<Claim>
                     {
                         new Claim(JwtRegisteredClaimNames.Jti, guid),
                         new Claim("TenantUserName", model.TenantUserName),
                         new Claim("TenantID", getTenant.TenantID.ToString()),
-                        new Claim("TenantName", getTenant.TenantName),
                         new Claim("PkID", tenantUser.PkID.ToString()),
+                        new Claim("TenantName", getTenant.TenantName),
                         new Claim("CompanyName", getTenant.CompanyName),
                         new Claim(ClaimTypes.Role, role?.Name ?? "No Role")
                     };
 
+                    // Add new claims to AspNetUserClaims
+                    var addClaimsResult = await _userManager.AddClaimsAsync(user, cookieClaims);
+
+                    if (!addClaimsResult.Succeeded)
+                    {
+                        return BadRequest("Failed to add new claims.");
+                    }
+
                     // Sign in the user with claims
-                    await _signInManager.SignInWithClaimsAsync(user, isPersistent: true, identityCliams);
+                    await _signInManager.SignInAsync(user, isPersistent: true);
 
                     return Ok(new
                     {
@@ -174,6 +188,7 @@ namespace WebApplication1.Controllers
 
             return BadRequest("Invalid login attempt.");
         }
+
 
     }
 

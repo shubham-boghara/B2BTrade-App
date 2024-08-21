@@ -90,7 +90,6 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true; // Enable sliding expiration
     options.LoginPath = "/Identity/Account/Login";
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-    options.SlidingExpiration = true;
 });
 
 // Configure token lifespan
